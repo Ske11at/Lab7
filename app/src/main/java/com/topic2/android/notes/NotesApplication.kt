@@ -1,7 +1,7 @@
 package com.topic2.android.notes
 
 import android.app.Application
-import com.topic2.android.notes.dependencyinjection.DependencyInjector
+import com.topic2.android.notes.domain.model.dependencyinjection.DependencyInjector
 
 /**
  * Класс приложения, отвечающий за инициализацию и выполнение зависимостей.

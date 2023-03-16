@@ -1,4 +1,4 @@
-package com.topic2.android.notes.dependencyinjection
+package com.topic2.android.notes.domain.model.dependencyinjection
 
 import android.content.Context
 import androidx.room.Room
