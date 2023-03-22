@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -61,22 +62,64 @@ SaveNoteTopAppBar(
     onSaveNoteClick ={
         viewModel.saveNote(noteEntry)
     },
+
     onOpenColorPickerClick = {},
     onDeleteNoteClick = {
         viewModel.moveNoteToTrash(noteEntry)
     }
 )
-},
+    },
     content = {
-        SaveNoteContent(
-            note = noteEntry,
-            onNoteChange = {updateNoteEntry->
-                viewModel.onNoteEntryChange(updateNoteEntry)
+        BottomDrawer(
+            drawerState = bottomDrawerState,
+            drawerContent = {
+                ColorPicker(colors = colors,
+                    onColorSelect = {color ->
+                        val newNoteEntry = noteEntry.copy(color = color)
+                        viewModel.onNoteEntryChange(newNoteEntry)
+                    }
+                )
+            },
+            content = {
+                SaveNoteContent(note = noteEntry, onNoteChange = {updateNOteEntry ->
+                    viewModel.onNoteEntryChange(updateNOteEntry)
+                }
+                )
             }
         )
+        if (moveNoteToTrashDialogShownState.value){
+            AlertDialog(
+                onDismissRequest = {
+                    moveNoteToTrashDialogShownState.value = false
+                },
+                title = {
+                    Text("Move note to the trash")
+                },
+                text = {
+                    Text(
+                        "Are you sure you want to " +
+                                "move this note to the trash"
+                    )
+                },
+                confirmButton = {
+                    TextButton(onClick = {viewModel.moveNoteToTrash(noteEntry)
+                    }) {
+                        Text("Confirm")
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = {
+                        moveNoteToTrashDialogShownState.value = false
+                    }) {
+                        Text("Dismiss")
+                    }
+                }
+            )
+        }
     }
 )
 }
+
 
 @Composable
 private fun ColorPicker(
@@ -171,13 +214,14 @@ private fun SaveNoteTopAppBar(
                 Icon(
                     imageVector = Icons.Default.Check,
                     tint = MaterialTheme.colors.onPrimary,
-                    contentDescription = "Save Note Button"
+                    contentDescription = "Save Note"
                 )
             }
             IconButton(onClick = onOpenColorPickerClick) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_baseline_color_lens_24),
-                    contentDescription = "Add Note Button"
+                    contentDescription = "Open Color Picker Button",
+                tint = MaterialTheme.colors.onPrimary
                 )
             }
         }
